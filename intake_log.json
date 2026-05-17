@@ -1,0 +1,98 @@
+[
+  {
+    "request": {
+      "tool_name": "Marketing Copy Assistant",
+      "vendor_name": "WriteBright Inc.",
+      "intended_use_case": "Draft blog posts and social captions from public brand guidelines.",
+      "data_classification_level": "public",
+      "estimated_number_of_users": 25,
+      "processes_personal_data": "no",
+      "connects_to_external_apis": "no",
+      "business_justification": "Speed up content production for the marketing team.",
+      "requestor_name": "Jordan Lee"
+    },
+    "risk_level": "Low",
+    "recommended_next_step": "Auto-approve",
+    "generated_at": "2026-05-17T01:08:45.656735+00:00"
+  },
+  {
+    "request": {
+      "tool_name": "HR Policy Q&A Bot",
+      "vendor_name": "PeopleAssist LLC",
+      "intended_use_case": "Answer employee questions about benefits and policies using internal HR documents.",
+      "data_classification_level": "internal",
+      "estimated_number_of_users": 500,
+      "processes_personal_data": "yes",
+      "connects_to_external_apis": "no",
+      "business_justification": "Reduce repetitive HR ticket volume and improve self-service.",
+      "requestor_name": "Samira Patel"
+    },
+    "risk_level": "Medium",
+    "recommended_next_step": "Security review required",
+    "generated_at": "2026-05-17T01:08:45.656851+00:00"
+  },
+  {
+    "request": {
+      "tool_name": "Customer Support Copilot",
+      "vendor_name": "CloudServe AI",
+      "intended_use_case": "Suggest replies and summarize tickets using CRM and payment support history.",
+      "data_classification_level": "restricted",
+      "estimated_number_of_users": 120,
+      "processes_personal_data": "yes",
+      "connects_to_external_apis": "yes",
+      "business_justification": "Improve first-response time and agent productivity in Tier-2 support.",
+      "requestor_name": "Alex Chen"
+    },
+    "risk_level": "High",
+    "recommended_next_step": "CISO approval required",
+    "generated_at": "2026-05-17T01:08:45.656869+00:00"
+  },
+  {
+    "request": {
+      "tool_name": "Marketing Copy Assistant",
+      "vendor_name": "WriteBright Inc.",
+      "intended_use_case": "Draft blog posts and social captions from public brand guidelines.",
+      "data_classification_level": "public",
+      "estimated_number_of_users": 25,
+      "processes_personal_data": "no",
+      "connects_to_external_apis": "no",
+      "business_justification": "Speed up content production for the marketing team.",
+      "requestor_name": "Jordan Lee"
+    },
+    "risk_level": "Low",
+    "recommended_next_step": "Auto-approve",
+    "generated_at": "2026-05-17T01:13:56.320299+00:00"
+  },
+  {
+    "request": {
+      "tool_name": "HR Policy Q&A Bot",
+      "vendor_name": "PeopleAssist LLC",
+      "intended_use_case": "Answer employee questions about benefits and policies using internal HR documents.",
+      "data_classification_level": "internal",
+      "estimated_number_of_users": 500,
+      "processes_personal_data": "yes",
+      "connects_to_external_apis": "no",
+      "business_justification": "Reduce repetitive HR ticket volume and improve self-service.",
+      "requestor_name": "Samira Patel"
+    },
+    "risk_level": "Medium",
+    "recommended_next_step": "Security review required",
+    "generated_at": "2026-05-17T01:13:56.320464+00:00"
+  },
+  {
+    "request": {
+      "tool_name": "Customer Support Copilot",
+      "vendor_name": "CloudServe AI",
+      "intended_use_case": "Suggest replies and summarize tickets using CRM and payment support history.",
+      "data_classification_level": "restricted",
+      "estimated_number_of_users": 120,
+      "processes_personal_data": "yes",
+      "connects_to_external_apis": "yes",
+      "business_justification": "Improve first-response time and agent productivity in Tier-2 support.",
+      "requestor_name": "Alex Chen"
+    },
+    "risk_level": "High",
+    "recommended_next_step": "CISO approval required",
+    "generated_at": "2026-05-17T01:13:56.320482+00:00"
+  }
+]
