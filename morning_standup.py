@@ -21,7 +21,7 @@ import anthropic
 # Paste your Anthropic API key here, or set the ANTHROPIC_API_KEY environment
 # variable and leave this string empty to read from the environment.
 
-ANTHROPIC_API_KEY = "ANTHROPIC_API_KEY_REMOVED"
+ANTHROPIC_API_KEY = ""
 
 # -----------------------------------------------------------------------------
 # Master life architecture context — updated weekly as situation evolves
