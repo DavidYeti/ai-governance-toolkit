@@ -47,8 +47,8 @@ Network-level visibility across the enterprise with mature guardrails and live t
 # ISO 42001–inspired controls (simplified for education)
 # -----------------------------------------------------------------------------
 # Each entry is one control. "keywords" are plain words or short phrases we
-# look for in the system description. If at least one appears, we treat the
-# control check as "passed" for this demo (real assessments need evidence).
+# look for in the system description. Maturity is derived from how many keywords
+# match (confidence score); real assessments still need evidence beyond keywords.
 ISO_42001_CONTROLS: dict[str, dict[str, object]] = {
     "ISO-42001-A.2.2": {
         "name": "Stakeholder needs and AI expectations",
@@ -363,6 +363,21 @@ ISO_42001_CONTROLS: dict[str, dict[str, object]] = {
     },
 }
 
+# -----------------------------------------------------------------------------
+# Maturity levels (four-tier rating from keyword-match confidence percentage)
+# -----------------------------------------------------------------------------
+# Confidence = matched_keywords / total_keywords for each control.
+# The percentage maps to exactly one maturity label for the Status line.
+MATURITY_DOES_NOT_EXIST = "Does Not Exist"
+MATURITY_PARTIALLY_IMPLEMENTED = "Partially Implemented"
+MATURITY_LARGELY_IMPLEMENTED = "Largely Implemented"
+MATURITY_FULLY_IMPLEMENTED = "Fully Implemented"
+
+# Controls at Largely Implemented or Fully Implemented count toward compliance %.
+COMPLIANT_MATURITY_LEVELS = frozenset(
+    {MATURITY_LARGELY_IMPLEMENTED, MATURITY_FULLY_IMPLEMENTED}
+)
+
 
 def normalize_for_matching(text: str) -> str:
     """Lowercase the text so keyword checks are case-insensitive."""
@@ -385,41 +400,83 @@ def find_matching_keywords(description: str, keywords: list[str]) -> list[str]:
     return matches
 
 
-def evaluate_control(control_id: str, control: dict[str, object], description: str) -> tuple[bool, str, str | None]:
+def compute_confidence(matched_count: int, total_count: int) -> tuple[int, int, int]:
     """
-    Run the keyword check for one control.
+    Build the confidence score as matched keywords out of total keywords.
+
+    Returns (matched_count, total_count, percentage) where percentage is
+    rounded to the nearest whole number for display (e.g. 4/6 -> 67%).
+    """
+    if total_count == 0:
+        return 0, 0, 0
+    pct = round((matched_count / total_count) * 100)
+    return matched_count, total_count, pct
+
+
+def maturity_from_confidence_pct(pct: int) -> str:
+    """
+    Map confidence percentage to a four-level maturity rating.
+
+    0% -> Does Not Exist; 1-49% -> Partially Implemented;
+    50-79% -> Largely Implemented; 80-100% -> Fully Implemented.
+    """
+    if pct == 0:
+        return MATURITY_DOES_NOT_EXIST
+    if pct <= 49:
+        return MATURITY_PARTIALLY_IMPLEMENTED
+    if pct <= 79:
+        return MATURITY_LARGELY_IMPLEMENTED
+    return MATURITY_FULLY_IMPLEMENTED
+
+
+def evaluate_control(
+    control_id: str, control: dict[str, object], description: str
+) -> tuple[str, str, int, int, int]:
+    """
+    Run the keyword check for one control and derive maturity from confidence.
 
     Returns:
-        passed: True if at least one keyword was found.
-        note: Short human-readable explanation for the report.
-        matched_terms: Comma-separated list of matched keywords, or None.
+        maturity: Four-level status label for the report Status line.
+        note: Short human-readable explanation (which keywords matched or not).
+        matched_count, total_count, confidence_pct: for Confidence line display.
     """
     keywords = control["keywords"]  # type: ignore[assignment]
     assert isinstance(keywords, list)
     matched = find_matching_keywords(description, keywords)
+    total_count = len(keywords)
+    matched_count = len(matched)
+    matched_count, total_count, confidence_pct = compute_confidence(
+        matched_count, total_count
+    )
+    maturity = maturity_from_confidence_pct(confidence_pct)
+
     if matched:
         terms = ", ".join(matched)
         note = (
             f"Passed: the description mentions term(s) aligned with this control "
             f"({terms})."
         )
-        return True, note, terms
-    note = (
-        f"Failed: none of the lookup terms for this control were found "
-        f"({', '.join(keywords)})."
-    )
-    return False, note, None
+    else:
+        note = (
+            f"Failed: none of the lookup terms for this control were found "
+            f"({', '.join(keywords)})."
+        )
+    return maturity, note, matched_count, total_count, confidence_pct
 
 
-def print_findings_report(description: str) -> tuple[int, int]:
+def print_findings_report(description: str) -> tuple[int, dict[str, int]]:
     """
-    Print each control's result, then return (total_checked, passed_count).
+    Print each control's result, then return (total_checked, maturity_counts).
 
-    The summary line at the end of the script uses these counts to compute the
-    compliance score.
+    Maturity counts feed the summary; compliance uses Largely + Fully Implemented.
     """
     total = 0
-    passed_count = 0
+    maturity_counts: dict[str, int] = {
+        MATURITY_DOES_NOT_EXIST: 0,
+        MATURITY_PARTIALLY_IMPLEMENTED: 0,
+        MATURITY_LARGELY_IMPLEMENTED: 0,
+        MATURITY_FULLY_IMPLEMENTED: 0,
+    }
 
     print("\n" + "=" * 72)
     print("ISO 42001–style keyword assessment — findings")
@@ -430,38 +487,49 @@ def print_findings_report(description: str) -> tuple[int, int]:
         control = ISO_42001_CONTROLS[control_id]
         assert isinstance(control, dict)
         name = str(control["name"])
-        passed, note, _ = evaluate_control(control_id, control, description)
-
-        if passed:
-            passed_count += 1
-            status = "PASS"
-        else:
-            status = "FAIL"
+        maturity, note, matched_count, total_count, confidence_pct = evaluate_control(
+            control_id, control, description
+        )
+        maturity_counts[maturity] += 1
 
         print(f"Control:   {control_id}")
         print(f"Name:      {name}")
-        print(f"Status:    {status}")
+        print(f"Status:    {maturity}")
+        print(
+            f"Confidence: {matched_count}/{total_count} ({confidence_pct}%)"
+        )
         print(f"Note:      {note}")
         print("-" * 72)
 
-    return total, passed_count
+    return total, maturity_counts
 
 
-def print_summary(total: int, passed: int) -> None:
-    """Print totals and a simple compliance percentage (passed / total)."""
-    failed = total - passed
+def print_summary(total: int, maturity_counts: dict[str, int]) -> None:
+    """
+    Print maturity-level totals and compliance percentage.
+
+    Compliance = share of controls rated Largely Implemented or Fully Implemented.
+    """
+    compliant_count = (
+        maturity_counts[MATURITY_LARGELY_IMPLEMENTED]
+        + maturity_counts[MATURITY_FULLY_IMPLEMENTED]
+    )
     if total == 0:
         pct = 0.0
     else:
-        pct = (passed / total) * 100.0
+        pct = (compliant_count / total) * 100.0
 
     print("\n" + "=" * 72)
     print("Summary")
     print("=" * 72)
-    print(f"Controls checked:        {total}")
-    print(f"Passed (keyword match): {passed}")
-    print(f"Failed:                 {failed}")
-    print(f"Compliance score:      {pct:.1f}%")
+    print(f"Controls checked:           {total}")
+    print(f"Does Not Exist:             {maturity_counts[MATURITY_DOES_NOT_EXIST]}")
+    print(
+        f"Partially Implemented:    {maturity_counts[MATURITY_PARTIALLY_IMPLEMENTED]}"
+    )
+    print(f"Largely Implemented:      {maturity_counts[MATURITY_LARGELY_IMPLEMENTED]}")
+    print(f"Fully Implemented:        {maturity_counts[MATURITY_FULLY_IMPLEMENTED]}")
+    print(f"Compliance score:          {pct:.1f}%")
     print(
         "\nNote: This score reflects keyword overlap only, not formal conformance "
         "to ISO/IEC 42001."
@@ -471,8 +539,8 @@ def print_summary(total: int, passed: int) -> None:
 
 def main() -> None:
     """Entry point: assess the sample description and print the full report."""
-    total, passed = print_findings_report(SAMPLE_AI_SYSTEM_DESCRIPTION)
-    print_summary(total, passed)
+    total, maturity_counts = print_findings_report(SAMPLE_AI_SYSTEM_DESCRIPTION)
+    print_summary(total, maturity_counts)
 
 
 if __name__ == "__main__":
