@@ -46,9 +46,9 @@ Network-level visibility across the enterprise with mature guardrails and live t
 # -----------------------------------------------------------------------------
 # ISO 42001–inspired controls (simplified for education)
 # -----------------------------------------------------------------------------
-# Each entry is one control. "keywords" are plain words or short phrases we
-# look for in the system description. Maturity is derived from how many keywords
-# match (confidence score); real assessments still need evidence beyond keywords.
+# Each entry is one control: keywords for matching, recommendations for remediation
+# when maturity is below Fully Implemented. Maturity uses keyword confidence;
+# real assessments still need evidence beyond keywords.
 ISO_42001_CONTROLS: dict[str, dict[str, object]] = {
     "ISO-42001-A.2.2": {
         "name": "Stakeholder needs and AI expectations",
@@ -63,6 +63,11 @@ ISO_42001_CONTROLS: dict[str, dict[str, object]] = {
             "requirement",
             "customer",
             "regulatory",
+        ],
+        "recommendations": [
+            "Document a stakeholder register identifying all interested parties affected by AI systems including customers regulators and employees.",
+            "Conduct periodic stakeholder needs assessments and update AI governance policies accordingly.",
+            "Establish a formal feedback mechanism for stakeholders to raise AI-related concerns.",
         ],
     },
     "ISO-42001-A.4.1": {
@@ -80,6 +85,11 @@ ISO_42001_CONTROLS: dict[str, dict[str, object]] = {
             "environment",
             "objective",
         ],
+        "recommendations": [
+            "Conduct and document an organizational context analysis covering internal capabilities and external regulatory requirements affecting AI.",
+            "Maintain a risk register that captures environmental factors influencing AI system design and deployment.",
+            "Review context analysis at least annually or when significant changes occur.",
+        ],
     },
     "ISO-42001-A.5.1": {
         "name": "Leadership and AI commitment",
@@ -94,6 +104,11 @@ ISO_42001_CONTROLS: dict[str, dict[str, object]] = {
             "executive",
             "board",
             "sponsor",
+        ],
+        "recommendations": [
+            "Obtain and document executive sponsorship for the AI management system with named accountability at the leadership level.",
+            "Include AI governance in board-level reporting and strategic planning cycles.",
+            "Ensure leadership allocates sufficient resources and authority to the AI governance function.",
         ],
     },
     "ISO-42001-A.5.2": {
@@ -111,6 +126,11 @@ ISO_42001_CONTROLS: dict[str, dict[str, object]] = {
             "objective",
             "guideline",
         ],
+        "recommendations": [
+            "Draft and approve a formal AI policy signed by executive leadership covering responsible use safety security and ethics.",
+            "Communicate the AI policy to all relevant personnel and make it accessible to external stakeholders where appropriate.",
+            "Review and update the AI policy at least annually.",
+        ],
     },
     "ISO-42001-A.6.1": {
         "name": "AI risk treatment and lifecycle",
@@ -126,6 +146,11 @@ ISO_42001_CONTROLS: dict[str, dict[str, object]] = {
             "impact",
             "assessment",
         ],
+        "recommendations": [
+            "Develop a formal AI risk assessment methodology covering the full system lifecycle from design through decommission.",
+            "Document risk treatment plans for each identified AI risk with assigned owners and target resolution dates.",
+            "Integrate AI risk reviews into existing enterprise risk management processes.",
+        ],
     },
     "ISO-42001-A.6.2": {
         "name": "Roles responsibilities and authorities",
@@ -140,6 +165,11 @@ ISO_42001_CONTROLS: dict[str, dict[str, object]] = {
             "accountable",
             "governance",
             "authority",
+        ],
+        "recommendations": [
+            "Define and document roles and responsibilities for AI governance including an AI system owner for each deployed system.",
+            "Establish an AI governance committee or oversight body with clear decision-making authority.",
+            "Communicate role assignments to all affected personnel through documented organizational charts or RACI matrices.",
         ],
     },
     "ISO-42001-A.6.3": {
@@ -157,6 +187,11 @@ ISO_42001_CONTROLS: dict[str, dict[str, object]] = {
             "discrimination",
             "consequence",
         ],
+        "recommendations": [
+            "Conduct documented impact assessments for each AI system evaluating potential harms to individuals groups and society before deployment.",
+            "Include bias fairness and discrimination analysis in all AI system impact assessments.",
+            "Establish a threshold above which a formal third-party impact assessment is required.",
+        ],
     },
     "ISO-42001-A.7.1": {
         "name": "Competence and awareness",
@@ -171,6 +206,11 @@ ISO_42001_CONTROLS: dict[str, dict[str, object]] = {
             "education",
             "skill",
             "certification",
+        ],
+        "recommendations": [
+            "Develop a competency framework for all roles involved in AI system design development and operation.",
+            "Deliver and document mandatory AI awareness training for all personnel interacting with AI systems.",
+            "Track training completion and establish a minimum refresh cycle of annually.",
         ],
     },
     "ISO-42001-A.7.2": {
@@ -187,6 +227,11 @@ ISO_42001_CONTROLS: dict[str, dict[str, object]] = {
             "specification",
             "log",
         ],
+        "recommendations": [
+            "Establish a document control process for all AI governance artifacts including policies procedures risk assessments and audit reports.",
+            "Maintain version-controlled records of AI system configurations model versions and change histories.",
+            "Define retention periods and access controls for all AI governance documentation.",
+        ],
     },
     "ISO-42001-A.8.1": {
         "name": "Operational planning and control",
@@ -202,6 +247,11 @@ ISO_42001_CONTROLS: dict[str, dict[str, object]] = {
             "criteria",
             "procedure",
         ],
+        "recommendations": [
+            "Document operational procedures for all AI system processes including data ingestion model inference and output handling.",
+            "Implement monitoring and alerting for AI system performance against defined operational criteria.",
+            "Establish incident response procedures specific to AI system failures or unexpected behaviors.",
+        ],
     },
     "ISO-42001-A.8.2": {
         "name": "Human oversight",
@@ -216,6 +266,11 @@ ISO_42001_CONTROLS: dict[str, dict[str, object]] = {
             "supervise",
             "intervention",
             "approval",
+        ],
+        "recommendations": [
+            "Define and document the human oversight requirements for each AI system including when human review is mandatory before action is taken.",
+            "Implement technical controls that require human approval for high-risk AI-generated outputs or decisions.",
+            "Maintain logs of human oversight interventions and their outcomes for audit purposes.",
         ],
     },
     "ISO-42001-A.8.3": {
@@ -233,6 +288,11 @@ ISO_42001_CONTROLS: dict[str, dict[str, object]] = {
             "training data",
             "sensitive",
         ],
+        "recommendations": [
+            "Document a data governance policy covering data quality privacy and appropriate use for all AI training and inference data.",
+            "Implement data classification controls that restrict sensitive data from being used in AI systems without appropriate safeguards.",
+            "Establish data retention and deletion procedures aligned with privacy regulations for all AI-related data.",
+        ],
     },
     "ISO-42001-A.8.4": {
         "name": "AI supply chain and third-party risk",
@@ -248,6 +308,11 @@ ISO_42001_CONTROLS: dict[str, dict[str, object]] = {
             "model",
             "open source",
             "dependency",
+        ],
+        "recommendations": [
+            "Maintain an inventory of all third-party AI components models and services used across the organization.",
+            "Conduct security and governance assessments of AI vendors and suppliers before procurement and annually thereafter.",
+            "Include AI supply chain security requirements in all third-party contracts and service agreements.",
         ],
     },
     "ISO-42001-A.8.5": {
@@ -266,6 +331,11 @@ ISO_42001_CONTROLS: dict[str, dict[str, object]] = {
             "development",
             "guardrail",
         ],
+        "recommendations": [
+            "Establish a responsible AI development framework covering ethical review safety testing and security validation before deployment.",
+            "Implement pre-deployment testing procedures that verify AI system behavior against defined safety and security requirements.",
+            "Document and communicate responsible AI principles to all development teams with accountability for compliance.",
+        ],
     },
     "ISO-42001-A.8.6": {
         "name": "Adversarial robustness and threat protection",
@@ -283,6 +353,11 @@ ISO_42001_CONTROLS: dict[str, dict[str, object]] = {
             "red team",
             "manipulation",
         ],
+        "recommendations": [
+            "Conduct regular adversarial testing including red team exercises and prompt injection testing for all externally-facing AI systems.",
+            "Implement technical controls to detect and block adversarial inputs at the inference layer.",
+            "Maintain threat intelligence subscriptions specific to AI security and update detection rules accordingly.",
+        ],
     },
     "ISO-42001-A.8.7": {
         "name": "Transparency and explainability",
@@ -297,6 +372,11 @@ ISO_42001_CONTROLS: dict[str, dict[str, object]] = {
             "explainab",
             "visible",
             "understandab",
+        ],
+        "recommendations": [
+            "Document how each AI system makes decisions and what factors influence its outputs in language accessible to non-technical stakeholders.",
+            "Implement explainability features that allow end users and auditors to understand why specific AI outputs were generated.",
+            "Establish a process for responding to stakeholder requests for explanation of AI-generated decisions.",
         ],
     },
     "ISO-42001-A.9.1": {
@@ -314,6 +394,11 @@ ISO_42001_CONTROLS: dict[str, dict[str, object]] = {
             "performance",
             "kpi",
         ],
+        "recommendations": [
+            "Define and track key performance indicators for each AI system covering accuracy reliability and business impact.",
+            "Implement automated monitoring that generates alerts when AI system performance falls below defined thresholds.",
+            "Conduct formal quarterly reviews of AI system performance metrics with leadership reporting.",
+        ],
     },
     "ISO-42001-A.9.2": {
         "name": "Internal audit",
@@ -329,6 +414,11 @@ ISO_42001_CONTROLS: dict[str, dict[str, object]] = {
             "verification",
             "assessment",
         ],
+        "recommendations": [
+            "Establish an internal audit schedule for the AI management system with audits conducted at least annually.",
+            "Train internal auditors on ISO 42001 requirements and AI-specific audit techniques.",
+            "Document audit findings corrective actions and follow-up verification in a centralized audit management system.",
+        ],
     },
     "ISO-42001-A.10.1": {
         "name": "Nonconformity and corrective action",
@@ -343,6 +433,11 @@ ISO_42001_CONTROLS: dict[str, dict[str, object]] = {
             "incident",
             "remediation",
             "lesson",
+        ],
+        "recommendations": [
+            "Implement a formal nonconformity management process that captures investigates and resolves deviations from AI governance requirements.",
+            "Assign root cause analysis and corrective action ownership for all significant AI system failures or governance gaps.",
+            "Track corrective action completion and verify effectiveness before closing nonconformities.",
         ],
     },
     "ISO-42001-A.10.2": {
@@ -360,6 +455,11 @@ ISO_42001_CONTROLS: dict[str, dict[str, object]] = {
             "maturity",
             "continuous",
         ],
+        "recommendations": [
+            "Conduct an annual management review of the AI management system covering performance trends audit results and improvement opportunities.",
+            "Establish a continuous improvement roadmap for AI governance maturity with measurable targets and timelines.",
+            "Implement a lessons learned process that captures insights from AI incidents and improvement initiatives.",
+        ],
     },
 }
 
@@ -372,6 +472,30 @@ MATURITY_DOES_NOT_EXIST = "Does Not Exist"
 MATURITY_PARTIALLY_IMPLEMENTED = "Partially Implemented"
 MATURITY_LARGELY_IMPLEMENTED = "Largely Implemented"
 MATURITY_FULLY_IMPLEMENTED = "Fully Implemented"
+
+# Two-sentence explanations of each maturity rating for readers of the report.
+MATURITY_LEVEL_DESCRIPTIONS: dict[str, str] = {
+    MATURITY_DOES_NOT_EXIST: (
+        "No evidence found that this control requirement is addressed in the "
+        "system description or documentation. Immediate remediation is required "
+        "before this control can be considered for compliance."
+    ),
+    MATURITY_PARTIALLY_IMPLEMENTED: (
+        "Some evidence exists that this control area is being addressed but "
+        "coverage is insufficient to satisfy the full control requirement. "
+        "Targeted remediation is needed to close the identified gaps."
+    ),
+    MATURITY_LARGELY_IMPLEMENTED: (
+        "Most control requirements are addressed with evidence present for the "
+        "majority of expected criteria. Minor gaps remain and specific evidence "
+        "collection is needed to achieve full implementation."
+    ),
+    MATURITY_FULLY_IMPLEMENTED: (
+        "Strong evidence exists across all or nearly all control criteria "
+        "indicating this requirement is well addressed. Maintain current practices "
+        "and verify evidence remains current during periodic reviews."
+    ),
+}
 
 # Controls at Largely Implemented or Fully Implemented count toward compliance %.
 COMPLIANT_MATURITY_LEVELS = frozenset(
@@ -464,6 +588,37 @@ def evaluate_control(
     return maturity, note, matched_count, total_count, confidence_pct
 
 
+def print_maturity_level_key() -> None:
+    """Print the maturity rating scale before individual control findings."""
+    print("\n" + "=" * 72)
+    print("MATURITY LEVEL KEY")
+    print("=" * 72 + "\n")
+    for level in (
+        MATURITY_DOES_NOT_EXIST,
+        MATURITY_PARTIALLY_IMPLEMENTED,
+        MATURITY_LARGELY_IMPLEMENTED,
+        MATURITY_FULLY_IMPLEMENTED,
+    ):
+        print(f"{level}")
+        print(f"  {MATURITY_LEVEL_DESCRIPTIONS[level]}")
+        print()
+    print("=" * 72)
+
+
+def print_recommended_actions(control: dict[str, object]) -> None:
+    """
+    Print actionable recommendations for controls below Fully Implemented.
+
+    Fully Implemented controls already show strong keyword evidence; others
+    receive remediation guidance from the control's recommendations list.
+    """
+    recommendations = control["recommendations"]  # type: ignore[assignment]
+    assert isinstance(recommendations, list)
+    print("Recommended Actions:")
+    for index, action in enumerate(recommendations, start=1):
+        print(f"  {index}. {action}")
+
+
 def print_findings_report(description: str) -> tuple[int, dict[str, int]]:
     """
     Print each control's result, then return (total_checked, maturity_counts).
@@ -478,8 +633,8 @@ def print_findings_report(description: str) -> tuple[int, dict[str, int]]:
         MATURITY_FULLY_IMPLEMENTED: 0,
     }
 
-    print("\n" + "=" * 72)
-    print("ISO 42001–style keyword assessment — findings")
+    print_maturity_level_key()
+    print("\nISO 42001–style keyword assessment — findings")
     print("=" * 72 + "\n")
 
     for control_id in ISO_42001_CONTROLS:
@@ -499,6 +654,8 @@ def print_findings_report(description: str) -> tuple[int, dict[str, int]]:
             f"Confidence: {matched_count}/{total_count} ({confidence_pct}%)"
         )
         print(f"Note:      {note}")
+        if maturity != MATURITY_FULLY_IMPLEMENTED:
+            print_recommended_actions(control)
         print("-" * 72)
 
     return total, maturity_counts
