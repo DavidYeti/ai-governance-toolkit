@@ -50,38 +50,12 @@ The script processes bundled sample requests and writes results to `intake_log.j
 
 ---
 
-## Morning Standup Assistant
-
-**File:** `morning_standup.py`
-
-### Problem it solves
-
-Weekly plans and long-term priorities are easy to lose in a crowded calendar. A daily briefing should connect “what’s on the schedule” with “what actually matters”—without manual synthesis every morning.
-
-### What it demonstrates
-
-Claude-powered executive briefing: the assistant reads your weekly schedule and priorities, combines them with full life and career architecture context, and calls the **Anthropic Claude API** to generate a concise, personalized daily briefing that highlights what matters today and why.
-
-### How to run
-
-1. Complete [Setup](#setup) (API key and dependencies).
-2. Edit `WEEKLY_SCHEDULE`, `WEEKLY_PRIORITIES`, and related context blocks at the top of `morning_standup.py`.
-3. Run:
-
-```bash
-python3 morning_standup.py
-```
-
+## Project 3 — Compliance Intelligence Briefing (Coming in Version 2)
+A Claude-powered compliance status briefing that synthesizes findings 
+from the ISO 42001 checker and intake form into a daily operational summary.
+In development.
 ---
 
-## Setup
-
-### Install dependencies
-
-`morning_standup.py` requires the Anthropic SDK and `python-dotenv`. Install them with:
-
-```bash
-pip3 install anthropic python-dotenv
 ```
 
 The other two scripts use only the Python standard library.
