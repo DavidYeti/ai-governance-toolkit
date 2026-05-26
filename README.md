@@ -52,9 +52,9 @@ The script processes bundled sample requests and writes results to `intake_log.j
 
 ## Project 3 — Compliance Intelligence Briefing (Coming in Version 2) ##
 
-A Claude-powered compliance status briefing that synthesizes findings 
-from the ISO 42001 checker and intake form into a daily operational summary.
-In development.
+## In development ##
+
+**A Claude-powered compliance status briefing that synthesizes findings from the ISO 42001 checker and intake form into a daily operational summary.**
 ---
 
 ```
@@ -68,11 +68,6 @@ Create a `.env` file in the project root (do not commit this file):
 ```bash
 ANTHROPIC_API_KEY=your_key_here
 ```
-
-`morning_standup.py` loads this file automatically via `python-dotenv`. You may alternatively set `ANTHROPIC_API_KEY` in your shell environment or paste a key into `ANTHROPIC_API_KEY` at the top of `morning_standup.py` (environment variable is preferred for security).
-
-Obtain an API key from the [Anthropic Console](https://console.anthropic.com/).
-
 ---
 
 ## Frameworks & standards
