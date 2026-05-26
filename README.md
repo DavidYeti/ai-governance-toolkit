@@ -50,7 +50,8 @@ The script processes bundled sample requests and writes results to `intake_log.j
 
 ---
 
-## Project 3 — Compliance Intelligence Briefing (Coming in Version 2)
+## Project 3 — Compliance Intelligence Briefing (Coming in Version 2) ##
+
 A Claude-powered compliance status briefing that synthesizes findings 
 from the ISO 42001 checker and intake form into a daily operational summary.
 In development.
