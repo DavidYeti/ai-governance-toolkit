@@ -2,7 +2,8 @@
 """
 Unified multi-framework compliance checker.
 
-Runs keyword-based gap assessment against ISO 42001, ISO 27017, or both.
+Runs keyword-based gap assessment against ISO 42001, ISO 27017, ISO 27018,
+or all supported frameworks.
 This is a triage and education tool—not a certification instrument.
 """
 
@@ -70,7 +71,16 @@ COMPLIANT_MATURITY_LEVELS = frozenset(
 FRAMEWORK_REGISTRY: dict[str, str] = {
     "iso42001": "frameworks.iso42001",
     "iso27017": "frameworks.iso27017",
+    "iso27018": "frameworks.iso27018",
 }
+
+CONTROLS_ATTR_MAP: dict[str, str] = {
+    "iso42001": "ISO_42001_CONTROLS",
+    "iso27017": "ISO_27017_CONTROLS",
+    "iso27018": "ISO_27018_CONTROLS",
+}
+
+ALL_FRAMEWORK_KEYS = ("iso42001", "iso27017", "iso27018")
 
 
 def load_framework(framework_key: str) -> dict[str, Any]:
@@ -83,12 +93,10 @@ def load_framework(framework_key: str) -> dict[str, Any]:
     module_path = FRAMEWORK_REGISTRY[framework_key]
     module = importlib.import_module(module_path)
 
-    if framework_key == "iso42001":
-        controls = module.ISO_42001_CONTROLS
-    elif framework_key == "iso27017":
-        controls = module.ISO_27017_CONTROLS
-    else:
+    controls_attr = CONTROLS_ATTR_MAP.get(framework_key)
+    if controls_attr is None:
         raise ValueError(f"Unknown framework key: {framework_key}")
+    controls = getattr(module, controls_attr)
 
     return {
         "key": framework_key,
@@ -333,9 +341,12 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     )
     parser.add_argument(
         "--framework",
-        choices=["iso42001", "iso27017", "all"],
+        choices=["iso42001", "iso27017", "iso27018", "all"],
         required=True,
-        help="Compliance framework to assess (iso42001, iso27017, or all).",
+        help=(
+            "Compliance framework to assess "
+            "(iso42001, iso27017, iso27018, or all)."
+        ),
     )
     return parser.parse_args(argv)
 
@@ -347,7 +358,7 @@ def main(argv: list[str] | None = None) -> None:
 
     if args.framework == "all":
         combined_results: list[tuple[dict[str, Any], float]] = []
-        for framework_key in ("iso42001", "iso27017"):
+        for framework_key in ALL_FRAMEWORK_KEYS:
             framework = load_framework(framework_key)
             _, _, compliance_score = print_findings_report(framework, description)
             combined_results.append((framework, compliance_score))

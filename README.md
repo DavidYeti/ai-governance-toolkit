@@ -2,7 +2,7 @@
 
 **Automated AI governance tooling for multi-framework compliance assessment, intake control, and executive focus.**
 
-This repository is a portfolio collection of Python utilities that operationalize AI governance and cloud security workflows aligned with **ISO/IEC 42001** (AI management systems), **ISO/IEC 27017** (cloud security controls), and related risk-management practices. Each tool targets a distinct stage of the lifecycle—from control gap assessment and tool adoption intake to personal execution planning—so organizations can move from policy on paper to repeatable, auditable automation.
+This repository is a portfolio collection of Python utilities that operationalize AI governance and cloud security workflows aligned with **ISO/IEC 42001** (AI management systems), **ISO/IEC 27017** (cloud security controls), **ISO/IEC 27018** (cloud PII protection), and related risk-management practices. Each tool targets a distinct stage of the lifecycle—from control gap assessment and tool adoption intake to personal execution planning—so organizations can move from policy on paper to repeatable, auditable automation.
 
 ---
 
@@ -23,6 +23,7 @@ Unified compliance assessment across multiple frameworks: the checker evaluates 
 ```bash
 python checker.py --framework iso42001
 python checker.py --framework iso27017
+python checker.py --framework iso27018
 python checker.py --framework all
 ```
 
@@ -34,12 +35,12 @@ The script runs against a built-in sample system description. Edit `SAMPLE_SYSTE
 |-----------|----------|--------|
 | ISO/IEC 42001:2023 | 20 | AI Governance |
 | ISO/IEC 27017:2015 | 24 | Cloud Security |
+| ISO/IEC 27018:2019 | 26 | Cloud PII Protection |
 
-Control libraries live in `frameworks/iso42001.py` and `frameworks/iso27017.py`. The original standalone checker remains at `iso42001_checker.py` for reference.
+Control libraries live in `frameworks/iso42001.py`, `frameworks/iso27017.py`, and `frameworks/iso27018.py`. The original standalone checker remains at `iso42001_checker.py` for reference.
 
 ### Roadmap
 
-- **ISO 27018** (PII protection in cloud) — in development
 - **Multi-format evidence input** (PDF, images, Word) — in development
 - **Evidence storage integration** (Google Drive, AWS S3) — planned
 - **Multi-framework console UI** — planned
@@ -79,7 +80,8 @@ ai-governance-toolkit/
 ├── ai_intake_form.py           # AI tool intake and risk scoring
 ├── frameworks/
 │   ├── iso42001.py             # ISO 42001 control library
-│   └── iso27017.py             # ISO 27017 control library
+│   ├── iso27017.py             # ISO 27017 control library
+│   └── iso27018.py             # ISO 27018 control library
 ├── evidence/
 │   └── README.md               # Evidence collection layer (planned)
 ├── requirements.txt
@@ -116,6 +118,7 @@ Obtain an API key from the [Anthropic Console](https://console.anthropic.com/).
 |------|-----------|
 | AI management systems | ISO/IEC 42001 |
 | Cloud security controls | ISO/IEC 27017 |
+| Cloud PII protection | ISO/IEC 27018 |
 | Risk management | NIST AI RMF (conceptual alignment) |
 | Intake & audit | Internal governance / third-party risk patterns |
 
