@@ -1,30 +1,50 @@
 # AI Governance Toolkit
 
-**Automated AI governance tooling for compliance assessment, intake control, and executive focus.**
+**Automated AI governance tooling for multi-framework compliance assessment, intake control, and executive focus.**
 
-This repository is a portfolio collection of Python utilities that operationalize AI governance workflows aligned with **ISO/IEC 42001** (AI management systems) and related risk-management practices. Each tool targets a distinct stage of the AI lifecycle—from control gap assessment and tool adoption intake to personal execution planning—so organizations (and practitioners) can move from policy on paper to repeatable, auditable automation.
+This repository is a portfolio collection of Python utilities that operationalize AI governance and cloud security workflows aligned with **ISO/IEC 42001** (AI management systems), **ISO/IEC 27017** (cloud security controls), and related risk-management practices. Each tool targets a distinct stage of the lifecycle—from control gap assessment and tool adoption intake to personal execution planning—so organizations can move from policy on paper to repeatable, auditable automation.
 
 ---
 
-## ISO 42001 Control Checker
+## Multi-Framework Compliance Checker
 
-**File:** `iso42001_checker.py`
+**File:** `checker.py`
 
 ### Problem it solves
 
-Manual gap assessments against ISO 42001 controls are slow, inconsistent, and hard to scale across many AI systems. Teams need a fast first pass that surfaces likely control gaps before deeper audit work begins.
+Manual gap assessments against ISO standards are slow, inconsistent, and hard to scale across many systems. Teams need a fast first pass that surfaces likely control gaps before deeper audit work begins.
 
 ### What it demonstrates
 
-Automated gap assessment for AI governance: the script evaluates a plain-text AI system description against a curated set of ISO 42001–inspired controls using keyword-based checks, then produces a structured findings report with **PASS/FAIL** per control and an overall **compliance percentage score**. It is intended for triage and education—not certification.
+Unified compliance assessment across multiple frameworks: the checker evaluates a plain-text system description against a curated control library using keyword-based checks, confidence scoring, four-level maturity ratings, and actionable recommendations. It is intended for triage and education—not certification.
 
 ### How to run
 
 ```bash
-python3 iso42001_checker.py
+python checker.py --framework iso42001
+python checker.py --framework iso27017
+python checker.py --framework all
 ```
 
-The script runs against a built-in sample system description. Edit `SAMPLE_AI_SYSTEM_DESCRIPTION` in the file to assess your own system.
+The script runs against a built-in sample system description. Edit `SAMPLE_SYSTEM_DESCRIPTION` in `checker.py` to assess your own environment.
+
+### Supported Frameworks
+
+| Framework | Controls | Domain |
+|-----------|----------|--------|
+| ISO/IEC 42001:2023 | 20 | AI Governance |
+| ISO/IEC 27017:2015 | 24 | Cloud Security |
+
+Control libraries live in `frameworks/iso42001.py` and `frameworks/iso27017.py`. The original standalone checker remains at `iso42001_checker.py` for reference.
+
+### Roadmap
+
+- **ISO 27018** (PII protection in cloud) — in development
+- **Multi-format evidence input** (PDF, images, Word) — in development
+- **Evidence storage integration** (Google Drive, AWS S3) — planned
+- **Multi-framework console UI** — planned
+
+See `evidence/README.md` for the planned evidence collection layer.
 
 ---
 
@@ -43,33 +63,27 @@ AI tool intake automation: structured adoption requests are scored as **Low**, *
 ### How to run
 
 ```bash
-python3 ai_intake_form.py
+python ai_intake_form.py
 ```
 
-The script processes bundled sample requests and writes results to `intake_log.json` in the project directory. Customize `SAMPLE_REQUESTS` in the file to model your organization’s intake scenarios.
+The script processes bundled sample requests and writes results to `intake_log.json` in the project directory. Customize `SAMPLE_REQUESTS` in the file to model your organization's intake scenarios.
 
 ---
 
-## Morning Standup Assistant
+## Project Structure
 
-**File:** `morning_standup.py`
-
-### Problem it solves
-
-Weekly plans and long-term priorities are easy to lose in a crowded calendar. A daily briefing should connect “what’s on the schedule” with “what actually matters”—without manual synthesis every morning.
-
-### What it demonstrates
-
-Claude-powered executive briefing: the assistant reads your weekly schedule and priorities, combines them with full life and career architecture context, and calls the **Anthropic Claude API** to generate a concise, personalized daily briefing that highlights what matters today and why.
-
-### How to run
-
-1. Complete [Setup](#setup) (API key and dependencies).
-2. Edit `WEEKLY_SCHEDULE`, `WEEKLY_PRIORITIES`, and related context blocks at the top of `morning_standup.py`.
-3. Run:
-
-```bash
-python3 morning_standup.py
+```
+ai-governance-toolkit/
+├── checker.py                  # Unified multi-framework compliance engine
+├── iso42001_checker.py         # Original standalone ISO 42001 checker
+├── ai_intake_form.py           # AI tool intake and risk scoring
+├── frameworks/
+│   ├── iso42001.py             # ISO 42001 control library
+│   └── iso27017.py             # ISO 27017 control library
+├── evidence/
+│   └── README.md               # Evidence collection layer (planned)
+├── requirements.txt
+└── README.md
 ```
 
 ---
@@ -78,33 +92,30 @@ python3 morning_standup.py
 
 ### Install dependencies
 
-`morning_standup.py` requires the Anthropic SDK and `python-dotenv`. Install them with:
-
 ```bash
-pip3 install anthropic python-dotenv
+pip install -r requirements.txt
 ```
 
-The other two scripts use only the Python standard library.
+The compliance checker uses only the Python standard library today. Additional packages in `requirements.txt` support planned evidence collection and other toolkit scripts.
 
-### Configure your API key
+### Configure your API key (optional)
 
-Create a `.env` file in the project root (do not commit this file):
+For scripts that call the Anthropic API, create a `.env` file in the project root (do not commit this file):
 
 ```bash
 ANTHROPIC_API_KEY=your_key_here
 ```
 
-`morning_standup.py` loads this file automatically via `python-dotenv`. You may alternatively set `ANTHROPIC_API_KEY` in your shell environment or paste a key into `ANTHROPIC_API_KEY` at the top of `morning_standup.py` (environment variable is preferred for security).
-
 Obtain an API key from the [Anthropic Console](https://console.anthropic.com/).
 
 ---
 
-## Frameworks & standards
+## Frameworks & Standards
 
 | Area | Reference |
 |------|-----------|
 | AI management systems | ISO/IEC 42001 |
+| Cloud security controls | ISO/IEC 27017 |
 | Risk management | NIST AI RMF (conceptual alignment) |
 | Intake & audit | Internal governance / third-party risk patterns |
 

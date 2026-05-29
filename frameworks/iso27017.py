@@ -1,0 +1,619 @@
+"""ISO/IEC 27017:2015 cloud security control library for the unified checker."""
+
+from __future__ import annotations
+
+FRAMEWORK_METADATA = {
+    "name": "ISO/IEC 27017:2015",
+    "description": (
+        "Code of practice for information security controls for "
+        "cloud services — guidance for both cloud service providers and customers"
+    ),
+    "total_controls": 24,
+    "domain": "Cloud Security",
+}
+
+MATURITY_DOES_NOT_EXIST = "Does Not Exist"
+MATURITY_PARTIALLY_IMPLEMENTED = "Partially Implemented"
+MATURITY_LARGELY_IMPLEMENTED = "Largely Implemented"
+MATURITY_FULLY_IMPLEMENTED = "Fully Implemented"
+
+MATURITY_LEVEL_DESCRIPTIONS: dict[str, str] = {
+    MATURITY_DOES_NOT_EXIST: (
+        "No evidence found that this control requirement is addressed in the "
+        "system description or documentation. Immediate remediation is required "
+        "before this control can be considered for compliance."
+    ),
+    MATURITY_PARTIALLY_IMPLEMENTED: (
+        "Some evidence exists that this control area is being addressed but "
+        "coverage is insufficient to satisfy the full control requirement. "
+        "Targeted remediation is needed to close the identified gaps."
+    ),
+    MATURITY_LARGELY_IMPLEMENTED: (
+        "Most control requirements are addressed with evidence present for the "
+        "majority of expected criteria. Minor gaps remain and specific evidence "
+        "collection is needed to achieve full implementation."
+    ),
+    MATURITY_FULLY_IMPLEMENTED: (
+        "Strong evidence exists across all or nearly all control criteria "
+        "indicating this requirement is well addressed. Maintain current practices "
+        "and verify evidence remains current during periodic reviews."
+    ),
+}
+
+ISO_27017_CONTROLS: dict[str, dict[str, object]] = {
+    "ISO-27017-CLD.6.3.1": {
+        "name": "Shared roles and responsibilities within a cloud computing environment",
+        "description": (
+            "Roles and responsibilities of cloud service providers and "
+            "cloud service customers shall be defined and documented."
+        ),
+        "keywords": [
+            "shared responsibility",
+            "role",
+            "responsibility",
+            "provider",
+            "customer",
+            "documented",
+            "defined",
+        ],
+        "recommendations": [
+            "Document a shared responsibility matrix defining which security controls "
+            "are owned by the cloud provider versus the cloud customer.",
+            "Include shared responsibility documentation in all cloud service "
+            "agreements and review annually.",
+            "Ensure all teams interacting with cloud services understand their "
+            "specific security obligations under the shared model.",
+        ],
+    },
+    "ISO-27017-CLD.8.1.1": {
+        "name": "Inventory of assets in the cloud",
+        "description": (
+            "Cloud service customers shall maintain an inventory of virtual assets "
+            "and cloud resources used in the cloud computing environment."
+        ),
+        "keywords": [
+            "inventory",
+            "asset",
+            "virtual",
+            "cloud resource",
+            "instance",
+            "catalog",
+            "register",
+            "track",
+        ],
+        "recommendations": [
+            "Implement automated discovery tools to maintain a real-time inventory "
+            "of all cloud virtual machines, storage, and network resources.",
+            "Assign asset owners and classification labels to every cloud resource "
+            "in the inventory.",
+            "Review and reconcile the cloud asset inventory at least monthly "
+            "against deployed infrastructure.",
+        ],
+    },
+    "ISO-27017-CLD.8.1.2": {
+        "name": "Ownership of assets in the cloud",
+        "description": (
+            "Ownership of virtual and cloud assets shall be assigned and "
+            "documented for cloud service customer assets."
+        ),
+        "keywords": [
+            "ownership",
+            "owner",
+            "asset",
+            "accountable",
+            "assigned",
+            "cloud",
+            "virtual",
+        ],
+        "recommendations": [
+            "Define and document an asset owner for every cloud resource in the "
+            "inventory with contact information and escalation paths.",
+            "Integrate asset ownership metadata into cloud tagging policies "
+            "enforced at provisioning time.",
+            "Conduct quarterly reviews to verify asset ownership records remain "
+            "accurate after organizational changes.",
+        ],
+    },
+    "ISO-27017-CLD.9.5.1": {
+        "name": "Segregation in virtual computing environments",
+        "description": (
+            "Cloud service providers shall implement segregation mechanisms "
+            "to separate virtual computing environments of different customers."
+        ),
+        "keywords": [
+            "segregation",
+            "isolation",
+            "tenant",
+            "multi-tenant",
+            "hypervisor",
+            "virtual",
+            "separate",
+        ],
+        "recommendations": [
+            "Verify cloud provider documentation confirms tenant isolation controls "
+            "for virtual computing environments.",
+            "Use dedicated tenancy or isolated virtual networks for workloads "
+            "processing sensitive data.",
+            "Include tenant segregation requirements in cloud provider security "
+            "assessments and contract reviews.",
+        ],
+    },
+    "ISO-27017-CLD.9.5.2": {
+        "name": "Hardening of virtual machines",
+        "description": (
+            "Virtual machines shall be hardened according to security baselines "
+            "before deployment in cloud environments."
+        ),
+        "keywords": [
+            "hardening",
+            "baseline",
+            "virtual machine",
+            "vm",
+            "configuration",
+            "cis",
+            "secure image",
+        ],
+        "recommendations": [
+            "Deploy cloud virtual machines only from approved hardened golden "
+            "images aligned with CIS or vendor security benchmarks.",
+            "Automate configuration compliance scanning for all deployed VMs "
+            "and remediate drift within defined SLAs.",
+            "Document and enforce a VM hardening standard covering OS patches, "
+            "unnecessary services, and access controls.",
+        ],
+    },
+    "ISO-27017-CLD.12.1.1": {
+        "name": "Cloud service customer operational procedures",
+        "description": (
+            "Cloud service customers shall document and implement operational "
+            "procedures for the use of cloud services."
+        ),
+        "keywords": [
+            "operational",
+            "procedure",
+            "runbook",
+            "cloud service",
+            "documented",
+            "process",
+            "standard",
+        ],
+        "recommendations": [
+            "Create runbooks covering provisioning, monitoring, patching, and "
+            "decommissioning of cloud resources.",
+            "Train operations teams on documented cloud operational procedures "
+            "and track completion records.",
+            "Review and update cloud operational procedures after major platform "
+            "changes or incidents.",
+        ],
+    },
+    "ISO-27017-CLD.12.3.1": {
+        "name": "Backup of cloud service customer data",
+        "description": (
+            "Cloud service customer data shall be backed up according to defined "
+            "retention and recovery requirements."
+        ),
+        "keywords": [
+            "backup",
+            "restore",
+            "recovery",
+            "retention",
+            "snapshot",
+            "replication",
+            "data protection",
+        ],
+        "recommendations": [
+            "Define backup policies for all cloud-hosted data including frequency, "
+            "retention periods, and geographic redundancy requirements.",
+            "Test backup restoration procedures at least quarterly and document "
+            "recovery time and recovery point objectives.",
+            "Encrypt cloud backups at rest and in transit and restrict restore "
+            "access to authorized personnel only.",
+        ],
+    },
+    "ISO-27017-CLD.12.4.1": {
+        "name": "Monitoring of cloud services",
+        "description": (
+            "Cloud services shall be monitored with logging and audit trails "
+            "to detect security events and operational issues."
+        ),
+        "keywords": [
+            "monitoring",
+            "logging",
+            "audit trail",
+            "cloudwatch",
+            "siem",
+            "alert",
+            "log",
+        ],
+        "recommendations": [
+            "Enable comprehensive logging for all cloud services including "
+            "API calls, authentication events, and configuration changes.",
+            "Centralize cloud logs in a SIEM with alerting rules for suspicious "
+            "activity and policy violations.",
+            "Define log retention periods that meet compliance requirements and "
+            "protect logs from unauthorized modification.",
+        ],
+    },
+    "ISO-27017-CLD.12.4.2": {
+        "name": "Administrator operational security",
+        "description": (
+            "Administrative access to cloud systems shall be restricted, "
+            "monitored, and protected with strong authentication controls."
+        ),
+        "keywords": [
+            "administrator",
+            "admin",
+            "privileged",
+            "access",
+            "mfa",
+            "root",
+            "break-glass",
+        ],
+        "recommendations": [
+            "Require multi-factor authentication for all cloud administrative "
+            "accounts without exception.",
+            "Implement just-in-time privileged access with approval workflows "
+            "for cloud administration tasks.",
+            "Disable or tightly control root and break-glass accounts with "
+            "documented usage procedures and monitoring.",
+        ],
+    },
+    "ISO-27017-CLD.12.4.3": {
+        "name": "System administrator activity logging",
+        "description": (
+            "Activities of system administrators in cloud environments shall "
+            "be logged and reviewed for unauthorized or anomalous actions."
+        ),
+        "keywords": [
+            "administrator activity",
+            "audit log",
+            "privileged action",
+            "session",
+            "review",
+            "traceability",
+        ],
+        "recommendations": [
+            "Enable detailed audit logging for all privileged cloud administration "
+            "actions including console and API activity.",
+            "Establish a regular review cadence for administrator activity logs "
+            "with documented findings and follow-up.",
+            "Alert on high-risk administrator actions such as policy changes, "
+            "identity modifications, and data exports.",
+        ],
+    },
+    "ISO-27017-CLD.12.4.4": {
+        "name": "Clock synchronization",
+        "description": (
+            "Clocks of information systems in cloud environments shall be "
+            "synchronized to an approved time source."
+        ),
+        "keywords": [
+            "clock",
+            "time synchronization",
+            "ntp",
+            "timestamp",
+            "time source",
+            "utc",
+        ],
+        "recommendations": [
+            "Configure all cloud virtual machines and services to synchronize "
+            "with a trusted NTP time source.",
+            "Monitor time synchronization status and alert on clock drift "
+            "exceeding defined thresholds.",
+            "Ensure log timestamps across cloud services use consistent UTC "
+            "formatting for forensic correlation.",
+        ],
+    },
+    "ISO-27017-CLD.12.5.1": {
+        "name": "Installation of software on cloud systems",
+        "description": (
+            "Installation of software on cloud systems shall be controlled "
+            "and authorized through defined change processes."
+        ),
+        "keywords": [
+            "software installation",
+            "package",
+            "authorized",
+            "change control",
+            "approved",
+            "deploy",
+            "whitelist",
+        ],
+        "recommendations": [
+            "Restrict software installation on cloud systems to approved packages "
+            "via infrastructure-as-code or image-based deployment.",
+            "Require change approval before installing new software on production "
+            "cloud workloads.",
+            "Maintain a software allowlist and scan cloud instances for "
+            "unauthorized or unapproved software.",
+        ],
+    },
+    "ISO-27017-CLD.12.6.1": {
+        "name": "Management of technical vulnerabilities in cloud environments",
+        "description": (
+            "Technical vulnerabilities in cloud environments shall be identified, "
+            "assessed, and remediated in a timely manner."
+        ),
+        "keywords": [
+            "vulnerability",
+            "patch",
+            "cve",
+            "scan",
+            "remediation",
+            "security update",
+            "exposure",
+        ],
+        "recommendations": [
+            "Deploy continuous vulnerability scanning across all cloud workloads "
+            "and container images.",
+            "Define SLAs for remediating critical and high-severity vulnerabilities "
+            "in cloud environments.",
+            "Integrate cloud provider security advisories into the vulnerability "
+            "management workflow.",
+        ],
+    },
+    "ISO-27017-CLD.13.1.1": {
+        "name": "Segregation of networks in virtual environments",
+        "description": (
+            "Networks in virtual cloud environments shall be segregated to "
+            "limit communication between security zones."
+        ),
+        "keywords": [
+            "network segregation",
+            "vpc",
+            "subnet",
+            "security group",
+            "segmentation",
+            "zone",
+            "firewall",
+        ],
+        "recommendations": [
+            "Design cloud network architecture with separate VPCs or subnets for "
+            "production, staging, and management workloads.",
+            "Apply least-privilege security group and firewall rules between "
+            "network segments.",
+            "Review network segmentation diagrams and rules quarterly to "
+            "eliminate unnecessary cross-zone connectivity.",
+        ],
+    },
+    "ISO-27017-CLD.13.1.2": {
+        "name": "Security of virtual networks",
+        "description": (
+            "Virtual networks in cloud environments shall be configured and "
+            "managed to protect against unauthorized access and data exposure."
+        ),
+        "keywords": [
+            "virtual network",
+            "network security",
+            "encryption",
+            "private endpoint",
+            "vpn",
+            "tls",
+            "acl",
+        ],
+        "recommendations": [
+            "Encrypt network traffic between cloud services using TLS or "
+            "provider-native encryption options.",
+            "Use private endpoints and VPN or dedicated connections instead of "
+            "public internet paths for sensitive workloads.",
+            "Implement network access control lists and route tables to enforce "
+            "approved traffic flows only.",
+        ],
+    },
+    "ISO-27017-CLD.13.1.3": {
+        "name": "Monitoring network access to cloud services",
+        "description": (
+            "Network access to cloud services shall be monitored to detect "
+            "unauthorized connections and anomalous traffic patterns."
+        ),
+        "keywords": [
+            "network monitoring",
+            "traffic analysis",
+            "flow log",
+            "intrusion",
+            "anomaly",
+            "access control",
+            "ids",
+        ],
+        "recommendations": [
+            "Enable VPC flow logs or equivalent network traffic logging for "
+            "all cloud virtual networks.",
+            "Deploy network intrusion detection or cloud-native threat detection "
+            "for anomalous traffic patterns.",
+            "Establish alerting and incident response procedures for unauthorized "
+            "network access attempts to cloud services.",
+        ],
+    },
+    "ISO-27017-CLD.14.1.1": {
+        "name": "Secure development environment for cloud services",
+        "description": (
+            "Development environments for cloud services shall be secured "
+            "and segregated from production environments."
+        ),
+        "keywords": [
+            "development environment",
+            "dev",
+            "secure coding",
+            "segregated",
+            "non-production",
+            "sandbox",
+            "ci/cd",
+        ],
+        "recommendations": [
+            "Maintain physically or logically segregated development environments "
+            "with access controls separate from production.",
+            "Apply the same baseline security controls to development cloud "
+            "environments including MFA and logging.",
+            "Prohibit production credentials and data in development environments "
+            "through automated secret scanning.",
+        ],
+    },
+    "ISO-27017-CLD.14.1.2": {
+        "name": "Protection of data in test environments in the cloud",
+        "description": (
+            "Sensitive data used in cloud test environments shall be protected "
+            "through masking, anonymization, or synthetic data substitutes."
+        ),
+        "keywords": [
+            "test environment",
+            "data masking",
+            "anonymization",
+            "synthetic data",
+            "non-production",
+            "pii",
+            "sanitized",
+        ],
+        "recommendations": [
+            "Replace production data in cloud test environments with masked, "
+            "anonymized, or synthetic datasets.",
+            "Restrict access to test environments containing any residual sensitive "
+            "data to authorized personnel only.",
+            "Document data handling procedures for test environments and audit "
+            "compliance with data protection policies.",
+        ],
+    },
+    "ISO-27017-CLD.14.2.1": {
+        "name": "Change management for cloud service operations",
+        "description": (
+            "Changes to cloud service configurations and deployments shall "
+            "follow a formal change management process."
+        ),
+        "keywords": [
+            "change management",
+            "change control",
+            "approval",
+            "deployment",
+            "release",
+            "rollback",
+            "cab",
+        ],
+        "recommendations": [
+            "Require documented change requests and approvals before modifying "
+            "production cloud infrastructure or configurations.",
+            "Use infrastructure-as-code with version control and peer review "
+            "for all cloud configuration changes.",
+            "Define rollback procedures and test them as part of the change "
+            "management process for cloud deployments.",
+        ],
+    },
+    "ISO-27017-CLD.15.1.1": {
+        "name": "Cloud supply chain information security",
+        "description": (
+            "Information security requirements shall be addressed throughout "
+            "the cloud service supply chain."
+        ),
+        "keywords": [
+            "supply chain",
+            "vendor",
+            "third-party",
+            "subprocessor",
+            "dependency",
+            "saas",
+            "provider assessment",
+        ],
+        "recommendations": [
+            "Maintain an inventory of all cloud service providers and subprocessors "
+            "in the supply chain with security contact details.",
+            "Conduct security assessments of cloud vendors before onboarding and "
+            "at least annually thereafter.",
+            "Include information security and breach notification requirements "
+            "in all cloud supply chain contracts.",
+        ],
+    },
+    "ISO-27017-CLD.15.1.2": {
+        "name": "Addressing security within cloud service provider agreements",
+        "description": (
+            "Cloud service provider agreements shall define security responsibilities, "
+            "service levels, and compliance obligations."
+        ),
+        "keywords": [
+            "service agreement",
+            "sla",
+            "contract",
+            "security clause",
+            "provider agreement",
+            "terms",
+            "compliance",
+        ],
+        "recommendations": [
+            "Include explicit security control requirements and audit rights in "
+            "all cloud service provider agreements.",
+            "Define data ownership, portability, and deletion obligations in "
+            "cloud contracts before signing.",
+            "Review cloud provider agreements annually and upon material service "
+            "or regulatory changes.",
+        ],
+    },
+    "ISO-27017-CLD.16.1.1": {
+        "name": "Incident response responsibilities in cloud environments",
+        "description": (
+            "Incident response roles and responsibilities for cloud security "
+            "incidents shall be defined for providers and customers."
+        ),
+        "keywords": [
+            "incident response",
+            "security incident",
+            "breach",
+            "notification",
+            "escalation",
+            "ir plan",
+            "forensic",
+        ],
+        "recommendations": [
+            "Document a cloud-specific incident response plan defining customer "
+            "and provider responsibilities and communication channels.",
+            "Conduct tabletop exercises for cloud security incidents at least "
+            "annually with both internal teams and providers.",
+            "Establish contractual incident notification timelines and evidence "
+            "preservation requirements with cloud providers.",
+        ],
+    },
+    "ISO-27017-CLD.17.1.1": {
+        "name": "Business continuity planning in cloud environments",
+        "description": (
+            "Business continuity and disaster recovery plans shall address "
+            "cloud service dependencies and recovery procedures."
+        ),
+        "keywords": [
+            "business continuity",
+            "disaster recovery",
+            "bcp",
+            "failover",
+            "rto",
+            "rpo",
+            "resilience",
+        ],
+        "recommendations": [
+            "Document business continuity plans that include cloud service "
+            "failover and multi-region recovery procedures.",
+            "Test disaster recovery for critical cloud workloads at least "
+            "annually and document results.",
+            "Verify cloud provider SLA commitments align with organizational "
+            "RTO and RPO requirements.",
+        ],
+    },
+    "ISO-27017-CLD.18.1.1": {
+        "name": "Compliance with legal requirements related to cloud services",
+        "description": (
+            "Legal, regulatory, and contractual requirements applicable to "
+            "cloud services shall be identified and complied with."
+        ),
+        "keywords": [
+            "compliance",
+            "legal",
+            "regulatory",
+            "gdpr",
+            "data residency",
+            "jurisdiction",
+            "contractual",
+        ],
+        "recommendations": [
+            "Maintain a register of legal and regulatory requirements applicable "
+            "to cloud services including data residency rules.",
+            "Verify cloud provider certifications and compliance reports cover "
+            "requirements relevant to your jurisdiction and industry.",
+            "Review cloud compliance obligations at least annually and upon "
+            "changes to applicable laws or service scope.",
+        ],
+    },
+}
