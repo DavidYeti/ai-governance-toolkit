@@ -140,6 +140,5 @@ Obtain an API key from the [Anthropic Console](https://console.anthropic.com/).
 
 ---
 
-**David Yeti** — Compliance & Information Security Engineering  
-Securtopia LLC — AI Governance and Compliance Consulting  
+**David Yeti** — Compliance & Information Security Engineering   
 [davidyeti.com](https://davidyeti.com)

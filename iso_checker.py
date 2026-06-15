@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """
-ISO/IEC 42001-style AI management system gap check (demo).
+ISO/IEC -style AI management system gap check (demo).
 
 This script uses simple keyword matching against a free-text description of an
-AI system. It is not a certification tool—use it for awareness and triage only.
+system. It is not a certification tool—use it for awareness and triage only.
 """
 
 from __future__ import annotations
