@@ -453,3 +453,35 @@ Built by David Yeti · [github.com/DavidYeti/ai-governance-toolkit](https://gith
 
 No data is stored, logged, or transmitted externally. All analysis runs within your browser session. Session data is cleared when you close the tab.
     """)
+
+# ---------------------------------------------------------------------------
+# Footer
+# ---------------------------------------------------------------------------
+
+st.divider()
+st.markdown(
+    """
+    <div style="text-align: center; padding: 8px 0 4px 0;">
+        <span style="font-size: 13px; color: #888;">
+            Built by
+            <a href="https://www.davidyeti.com" target="_blank"
+               style="color: #1F4E79; text-decoration: none;">
+               David Yeti
+            </a>
+            &nbsp;·&nbsp;
+            <a href="https://github.com/DavidYeti/ai-governance-toolkit"
+               target="_blank" style="color: #1F4E79; text-decoration: none;">
+               GitHub
+            </a>
+            &nbsp;·&nbsp;
+            <a href="https://www.linkedin.com/in/davidyeti/" target="_blank"
+               style="color: #1F4E79; text-decoration: none;">
+               LinkedIn
+            </a>
+            &nbsp;·&nbsp;
+            MIT License · 2026
+        </span>
+    </div>
+    """,
+    unsafe_allow_html=True,
+)
