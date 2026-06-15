@@ -39,6 +39,22 @@ The script runs against a built-in sample system description. Edit `SAMPLE_SYSTE
 
 Control libraries live in `frameworks/iso42001.py`, `frameworks/iso27017.py`, and `frameworks/iso27018.py`. The original standalone checker remains at `iso42001_checker.py` for reference.
 
+### Live Demo
+
+Running `python3 checker.py --framework all` against the built-in sample produces the following combined summary. The sample description is a generic cloud security system — scores vary by framework because each standard looks for different evidence types in the text.
+
+```
+Framework                      Domain               Controls   Score     
+ISO/IEC 42001:2023             AI Governance        20         10.0%
+ISO/IEC 27017:2015             Cloud Security       24         50.0%
+ISO/IEC 27018:2019             Cloud PII Protection 26         3.8%
+
+Note: Scores reflect keyword overlap against a generic cloud security 
+description. Run against your own system documentation for accurate results.
+```
+
+ISO 27018 scores low on cloud security descriptions because PII governance requires consent records, data subject rights documentation, and anonymization policies rather than infrastructure security language. To improve ISO 27018 scores, replace the sample text with documentation that addresses privacy-specific controls.
+
 ### Roadmap
 
 - **Multi-format evidence input** (PDF, images, Word) — in development
