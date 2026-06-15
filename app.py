@@ -222,146 +222,146 @@ with tab_results:
     results = st.session_state.get("ws_results")
     if not results:
         st.info("👈 Go to the **Analyze** tab to run a compliance check first.")
-        st.stop()
+    else:
 
-    source = st.session_state.get("ws_source", "")
-    frameworks = st.session_state.get("ws_frameworks", [])
-    word_count = st.session_state.get("ws_word_count") or 0
+        source = st.session_state.get("ws_source", "")
+        frameworks = st.session_state.get("ws_frameworks", [])
+        word_count = st.session_state.get("ws_word_count") or 0
 
-    st.header("Compliance Assessment Results")
-    st.caption(
-        f"Source: {source} · {word_count:,} words analyzed · {len(frameworks)} framework(s)"
-    )
-
-    cols = st.columns(len(frameworks))
-    for i, fw in enumerate(frameworks):
-        summary = results[fw]["summary"]
-        with cols[i]:
-            st.markdown(summary_card_html(fw, summary), unsafe_allow_html=True)
-
-    st.divider()
-
-    report_gen = ReportGenerator()
-    dl_col1, dl_col2, _ = st.columns([1, 1, 4])
-    date_str = datetime.now().strftime("%Y%m%d")
-    with dl_col1:
-        pdf_bytes = report_gen.generate_pdf(results, frameworks, source)
-        st.download_button(
-            "📥 Download PDF",
-            data=pdf_bytes,
-            file_name=f"compliance_report_{date_str}.pdf",
-            mime="application/pdf",
-            type="primary",
-        )
-    with dl_col2:
-        docx_bytes = report_gen.generate_docx(results, frameworks, source)
-        st.download_button(
-            "📄 Download Word Doc",
-            data=docx_bytes,
-            file_name=f"compliance_report_{date_str}.docx",
-            mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        st.header("Compliance Assessment Results")
+        st.caption(
+            f"Source: {source} · {word_count:,} words analyzed · {len(frameworks)} framework(s)"
         )
 
-    st.divider()
-
-    tab_labels = [framework_label(fw) for fw in frameworks]
-    if len(frameworks) > 1:
-        tab_labels.append("⚖️  Comparison")
-
-    result_tabs = st.tabs(tab_labels)
-
-    for i, fw in enumerate(frameworks):
-        with result_tabs[i]:
-            controls = results[fw]["controls"]
+        cols = st.columns(len(frameworks))
+        for i, fw in enumerate(frameworks):
             summary = results[fw]["summary"]
+            with cols[i]:
+                st.markdown(summary_card_html(fw, summary), unsafe_allow_html=True)
 
-            m1, m2, m3 = st.columns(3)
-            m1.metric("✅ Addressed", summary["addressed"])
-            m2.metric("⚠️ Partial", summary["partial"])
-            m3.metric("❌ Gaps", summary["gap"])
+        st.divider()
 
-            status_filter = st.multiselect(
-                "Filter by status",
-                ["ADDRESSED", "PARTIAL", "GAP"],
-                default=["ADDRESSED", "PARTIAL", "GAP"],
-                key=f"filter_{fw}",
+        report_gen = ReportGenerator()
+        dl_col1, dl_col2, _ = st.columns([1, 1, 4])
+        date_str = datetime.now().strftime("%Y%m%d")
+        with dl_col1:
+            pdf_bytes = report_gen.generate_pdf(results, frameworks, source)
+            st.download_button(
+                "📥 Download PDF",
+                data=pdf_bytes,
+                file_name=f"compliance_report_{date_str}.pdf",
+                mime="application/pdf",
+                type="primary",
             )
-            filtered = [c for c in controls if c["status"] in status_filter]
-
-            df = results_to_dataframe(filtered)
-            st.dataframe(df, use_container_width=True, hide_index=True)
-
-            controls_with_evidence = [c for c in filtered if c["evidence_snippets"]]
-            if controls_with_evidence:
-                with st.expander(
-                    f"📋 Evidence highlights ({len(controls_with_evidence)} controls)"
-                ):
-                    for c in controls_with_evidence[:10]:
-                        st.markdown(f"**{c['control_id']} — {c['control_name']}**")
-                        for snippet in c["evidence_snippets"][:2]:
-                            st.markdown(f"> {snippet.strip()}")
-                        st.divider()
-
-    if len(frameworks) > 1:
-        with result_tabs[-1]:
-            st.subheader("Framework comparison")
-            st.caption(
-                "Side-by-side view of how your document performs across all selected frameworks."
+        with dl_col2:
+            docx_bytes = report_gen.generate_docx(results, frameworks, source)
+            st.download_button(
+                "📄 Download Word Doc",
+                data=docx_bytes,
+                file_name=f"compliance_report_{date_str}.docx",
+                mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
             )
 
-            comp_rows = []
-            for fw in frameworks:
-                s = results[fw]["summary"]
-                comp_rows.append({
-                    "Framework": framework_label(fw),
-                    "Total Controls": s["total"],
-                    "✅ Addressed": s["addressed"],
-                    "⚠️ Partial": s["partial"],
-                    "❌ Gaps": s["gap"],
-                    "Score": f"{s['score_pct']}%",
-                    "Grade": score_grade(s["score_pct"]),
-                })
-            st.dataframe(pd.DataFrame(comp_rows), use_container_width=True, hide_index=True)
+        st.divider()
 
-            fig = go.Figure()
-            fw_labels = [framework_label(fw) for fw in frameworks]
-            fig.add_trace(
-                go.Bar(
-                    name="Addressed",
-                    x=fw_labels,
-                    y=[results[fw]["summary"]["addressed"] for fw in frameworks],
-                    marker_color="#2d7a2d",
+        tab_labels = [framework_label(fw) for fw in frameworks]
+        if len(frameworks) > 1:
+            tab_labels.append("⚖️  Comparison")
+
+        result_tabs = st.tabs(tab_labels)
+
+        for i, fw in enumerate(frameworks):
+            with result_tabs[i]:
+                controls = results[fw]["controls"]
+                summary = results[fw]["summary"]
+
+                m1, m2, m3 = st.columns(3)
+                m1.metric("✅ Addressed", summary["addressed"])
+                m2.metric("⚠️ Partial", summary["partial"])
+                m3.metric("❌ Gaps", summary["gap"])
+
+                status_filter = st.multiselect(
+                    "Filter by status",
+                    ["ADDRESSED", "PARTIAL", "GAP"],
+                    default=["ADDRESSED", "PARTIAL", "GAP"],
+                    key=f"filter_{fw}",
                 )
-            )
-            fig.add_trace(
-                go.Bar(
-                    name="Partial",
-                    x=fw_labels,
-                    y=[results[fw]["summary"]["partial"] for fw in frameworks],
-                    marker_color="#b87333",
-                )
-            )
-            fig.add_trace(
-                go.Bar(
-                    name="Gap",
-                    x=fw_labels,
-                    y=[results[fw]["summary"]["gap"] for fw in frameworks],
-                    marker_color="#cc3300",
-                )
-            )
-            fig.update_layout(
-                barmode="stack",
-                title="Control coverage by framework",
-                height=350,
-                margin=dict(t=40, b=20),
-                legend=dict(orientation="h", yanchor="bottom", y=1.02),
-            )
-            st.plotly_chart(fig, use_container_width=True)
+                filtered = [c for c in controls if c["status"] in status_filter]
 
-            st.caption(
-                "💡 LLM-powered cross-framework control mapping and overlap analysis "
-                "will be added in Phase 3."
-            )
+                df = results_to_dataframe(filtered)
+                st.dataframe(df, use_container_width=True, hide_index=True)
+
+                controls_with_evidence = [c for c in filtered if c["evidence_snippets"]]
+                if controls_with_evidence:
+                    with st.expander(
+                        f"📋 Evidence highlights ({len(controls_with_evidence)} controls)"
+                    ):
+                        for c in controls_with_evidence[:10]:
+                            st.markdown(f"**{c['control_id']} — {c['control_name']}**")
+                            for snippet in c["evidence_snippets"][:2]:
+                                st.markdown(f"> {snippet.strip()}")
+                            st.divider()
+
+        if len(frameworks) > 1:
+            with result_tabs[-1]:
+                st.subheader("Framework comparison")
+                st.caption(
+                    "Side-by-side view of how your document performs across all selected frameworks."
+                )
+
+                comp_rows = []
+                for fw in frameworks:
+                    s = results[fw]["summary"]
+                    comp_rows.append({
+                        "Framework": framework_label(fw),
+                        "Total Controls": s["total"],
+                        "✅ Addressed": s["addressed"],
+                        "⚠️ Partial": s["partial"],
+                        "❌ Gaps": s["gap"],
+                        "Score": f"{s['score_pct']}%",
+                        "Grade": score_grade(s["score_pct"]),
+                    })
+                st.dataframe(pd.DataFrame(comp_rows), use_container_width=True, hide_index=True)
+
+                fig = go.Figure()
+                fw_labels = [framework_label(fw) for fw in frameworks]
+                fig.add_trace(
+                    go.Bar(
+                        name="Addressed",
+                        x=fw_labels,
+                        y=[results[fw]["summary"]["addressed"] for fw in frameworks],
+                        marker_color="#2d7a2d",
+                    )
+                )
+                fig.add_trace(
+                    go.Bar(
+                        name="Partial",
+                        x=fw_labels,
+                        y=[results[fw]["summary"]["partial"] for fw in frameworks],
+                        marker_color="#b87333",
+                    )
+                )
+                fig.add_trace(
+                    go.Bar(
+                        name="Gap",
+                        x=fw_labels,
+                        y=[results[fw]["summary"]["gap"] for fw in frameworks],
+                        marker_color="#cc3300",
+                    )
+                )
+                fig.update_layout(
+                    barmode="stack",
+                    title="Control coverage by framework",
+                    height=350,
+                    margin=dict(t=40, b=20),
+                    legend=dict(orientation="h", yanchor="bottom", y=1.02),
+                )
+                st.plotly_chart(fig, use_container_width=True)
+
+                st.caption(
+                    "💡 LLM-powered cross-framework control mapping and overlap analysis "
+                    "will be added in Phase 3."
+                )
 
 with tab_howto:
     st.header("How to use this tool")

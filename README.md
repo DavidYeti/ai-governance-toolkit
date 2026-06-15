@@ -37,7 +37,30 @@ The script runs against a built-in sample system description. Edit `SAMPLE_SYSTE
 | ISO/IEC 27017:2015 | 24 | Cloud Security |
 | ISO/IEC 27018:2019 | 26 | Cloud PII Protection |
 
-Control libraries live in `frameworks/iso42001.py`, `frameworks/iso27017.py`, and `frameworks/iso27018.py`. The original standalone checker remains at `iso42001_checker.py` for reference.
+Control libraries live in `frameworks/iso42001.py`, `frameworks/iso27017.py`, and `frameworks/iso27018.py`. The original standalone checker remains at `iso_checker.py` for reference.
+
+---
+
+## Web App (Streamlit)
+
+**File:** `app.py`
+
+### What it does
+
+Browser-based compliance gap assessment — paste text, upload a PDF/Word document, or enter a URL. The app scores your document against ISO 42001, ISO 27017, and ISO 27018 using rule-based keyword matching. No API keys required.
+
+### How to run locally
+
+```bash
+pip install -r requirements.txt
+streamlit run app.py
+```
+
+Opens at `http://localhost:8501`.
+
+### Deploy
+
+See `DEPLOY.md` for Streamlit Community Cloud setup. Point the deployment at branch **`main`**, main file path **`app.py`**.
 
 ### Live Demo
 
@@ -57,9 +80,9 @@ ISO 27018 scores low on cloud security descriptions because PII governance requi
 
 ### Roadmap
 
-- **Multi-format evidence input** (PDF, images, Word) — in development
+- **Multi-format evidence input** (PDF, Word, URL) — available in Streamlit web app
 - **Evidence storage integration** (Google Drive, AWS S3) — planned
-- **Multi-framework console UI** — planned
+- **LLM-powered cross-framework mapping** — planned
 
 See `evidence/README.md` for the planned evidence collection layer.
 
@@ -91,15 +114,19 @@ The script processes bundled sample requests and writes results to `intake_log.j
 
 ```
 ai-governance-toolkit/
+├── app.py                      # Streamlit web frontend
 ├── checker.py                  # Unified multi-framework compliance engine
-├── iso42001_checker.py         # Original standalone ISO 42001 checker
+├── iso_checker.py              # Original standalone ISO 42001 checker
 ├── ai_intake_form.py           # AI tool intake and risk scoring
+├── frontend/                   # Web app modules (extractor, matcher, reports)
+├── data/                       # Control JSON libraries for the web app
 ├── frameworks/
 │   ├── iso42001.py             # ISO 42001 control library
 │   ├── iso27017.py             # ISO 27017 control library
 │   └── iso27018.py             # ISO 27018 control library
 ├── evidence/
 │   └── README.md               # Evidence collection layer (planned)
+├── DEPLOY.md                   # Streamlit Cloud deployment guide
 ├── requirements.txt
 └── README.md
 ```
@@ -114,7 +141,7 @@ ai-governance-toolkit/
 pip install -r requirements.txt
 ```
 
-The compliance checker uses only the Python standard library today. Additional packages in `requirements.txt` support planned evidence collection and other toolkit scripts.
+The compliance checker CLI uses only the Python standard library. The Streamlit web app requires the packages listed in `requirements.txt`.
 
 ### Configure your API key (optional)
 
