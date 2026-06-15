@@ -167,5 +167,5 @@ Obtain an API key from the [Anthropic Console](https://console.anthropic.com/).
 
 ---
 
-**David Yeti** — Compliance & Information Security Engineering   
+**David Yeti** — GRC Automation & Security Engineering   
 [davidyeti.com](https://davidyeti.com)
